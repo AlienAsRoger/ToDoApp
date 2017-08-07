@@ -1,5 +1,6 @@
 package com.developer4droid.todoapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == EDIT_FIELD) {
+		if (requestCode == EDIT_FIELD && resultCode == Activity.RESULT_OK) {
 			int position = data.getIntExtra(POSITION, 0);
 			String string = data.getStringExtra(STRING);
 			items.remove(position);
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 			public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
 				Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
 				intent.putExtra(POSITION, pos);
-				intent.putExtra(STRING, pos);
+				intent.putExtra(STRING, items.get(pos));
 				startActivityForResult(intent, EDIT_FIELD);
 			}
 		});
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
 			etNewItem.setText("");
 		}
 		writeItems();
+
+		lvItems.smoothScrollToPosition(itemsAdapter.getCount() - 1);
 	}
 
 	private void readItems() {

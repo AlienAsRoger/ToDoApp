@@ -9,10 +9,8 @@ import android.widget.EditText;
 
 public class EditItemActivity extends AppCompatActivity {
 
-	public static final String FILENAME = "todo.txt";
 	private int position;
 	private EditText editText;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,20 +27,21 @@ public class EditItemActivity extends AppCompatActivity {
 
 		// update UI
 		editText.setText(string);
+		editText.setSelection(editText.getText().length());
 	}
 
 	public void onSaveEdit(View view) {
-		if (editText.getText() != null) {
-			String string = editText.getText().toString();
-			editText.setText("");
-
-			Intent data = new Intent();
-			data.putExtra(MainActivity.POSITION, position);
-			data.putExtra(MainActivity.STRING, string);
-
-			setResult(Activity.RESULT_OK, data);
-			finish();
+		if (editText.getText() == null) {
+			return;
 		}
+		String string = editText.getText().toString();
+
+		Intent data = new Intent();
+		data.putExtra(MainActivity.POSITION, position);
+		data.putExtra(MainActivity.STRING, string);
+
+		setResult(Activity.RESULT_OK, data);
+		finish();
 	}
 
 }
