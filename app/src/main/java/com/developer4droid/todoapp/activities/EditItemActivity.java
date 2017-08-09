@@ -1,4 +1,4 @@
-package com.developer4droid.todoapp;
+package com.developer4droid.todoapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import com.developer4droid.todoapp.R;
 
 public class EditItemActivity extends AppCompatActivity {
 
@@ -16,7 +17,7 @@ public class EditItemActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_edit_item);
+		setContentView(R.layout.edit_item_layout);
 
 		editText = findViewById(R.id.editText);
 

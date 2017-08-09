@@ -3,7 +3,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context="com.developer4droid.todoapp.MainActivity"
+	tools:context="com.developer4droid.todoapp.activities.MainActivity"
+	android:id="@+id/mainLayout"
 	>
 
 	<!--ListView-->
@@ -12,6 +13,14 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_above="@+id/btnAddItem"
+		/>
+
+	<FrameLayout
+		android:id="@+id/fillView"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/colorAccentPressed"
+		android:visibility="invisible"
 		/>
 
 	<!--Edit Text-->
@@ -45,6 +54,7 @@
 		android:layout_marginEnd="@dimen/padding_default"
 		android:layout_marginBottom="@dimen/padding_default"
 		android:onClick="onAddItem"
+		style="@style/Button"
 		/>
 
 

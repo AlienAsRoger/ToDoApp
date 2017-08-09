@@ -1,41 +1,47 @@
-package com.developer4droid.todoapp;
+package com.developer4droid.todoapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import org.apache.commons.io.FileUtils;
+import com.developer4droid.todoapp.R;
+import com.developer4droid.todoapp.fragments.EditTextDialogFragment;
+import com.developer4droid.todoapp.utils.Utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EditTextDialogFragment.EditTextInterface {
 
-	public static final String FILENAME = "todo.txt";
 	public static final String POSITION = "position";
 	public static final String STRING = "string";
+	public static final String FRAGMENT_EDIT_NAME = "fragment_edit_name";
 
 	private ListView lvItems;
+	private View mainLayout;
+	private View fillView;
 	private List<String> items;
 	private ArrayAdapter<String> itemsAdapter;
 
-	private final int EDIT_FIELD = 11;
+	private final static int EDIT_FIELD = 11;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_main);
 
-		readItems();
+		items = Utils.readItems(this);
 		itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
 
+		mainLayout = findViewById(R.id.mainLayout);
+		fillView = findViewById(R.id.fillView);
 		lvItems = findViewById(R.id.lvItems);
 		lvItems.setAdapter(itemsAdapter);
 
@@ -48,11 +54,7 @@ public class MainActivity extends AppCompatActivity {
 		if (requestCode == EDIT_FIELD && resultCode == Activity.RESULT_OK) {
 			int position = data.getIntExtra(POSITION, 0);
 			String string = data.getStringExtra(STRING);
-			items.remove(position);
-			items.add(position, string);
-			itemsAdapter.notifyDataSetChanged();
-
-			writeItems();
+			updateItemAtPosition(position, string);
 		}
 	}
 
@@ -62,17 +64,19 @@ public class MainActivity extends AppCompatActivity {
 			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
 				items.remove(pos);
 				itemsAdapter.notifyDataSetChanged();
-				writeItems();
-				return false;
+				Utils.writeItems(MainActivity.this, items);
+				return true;
 			}
 		});
 		lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-				Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
-				intent.putExtra(POSITION, pos);
-				intent.putExtra(STRING, items.get(pos));
-				startActivityForResult(intent, EDIT_FIELD);
+//				Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
+//				intent.putExtra(POSITION, pos);
+//				intent.putExtra(STRING, items.get(pos));
+//				startActivityForResult(intent, EDIT_FIELD);
+
+				showEditDialog(pos);
 			}
 		});
 	}
@@ -80,34 +84,40 @@ public class MainActivity extends AppCompatActivity {
 	public void onAddItem(View view) {
 		EditText etNewItem = findViewById(R.id.etNewItem);
 		if (etNewItem.getText() != null) {
-			itemsAdapter.add(etNewItem.getText().toString());
-			etNewItem.setText("");
-		}
-		writeItems();
+			String text = etNewItem.getText().toString();
 
+			// Don't add empty items
+			if (TextUtils.isEmpty(text)) {
+				return;
+			}
+			itemsAdapter.add(text);
+			etNewItem.setText("");
+		} else {
+			return;
+		}
+		Utils.writeItems(this, items);
+
+		// scroll to the end of list
 		lvItems.smoothScrollToPosition(itemsAdapter.getCount() - 1);
 	}
 
-	private void readItems() {
-		File filesDir = getFilesDir();
-		File todoFile = new File(filesDir, FILENAME);
-
-		try {
-			items = new ArrayList<>(FileUtils.readLines(todoFile));
-		} catch (IOException e) {
-			e.printStackTrace();
-			items = new ArrayList<>();
-		}
+	private void showEditDialog(int pos) {
+		FragmentManager manager = getSupportFragmentManager();
+		EditTextDialogFragment fragment = EditTextDialogFragment.newInstance(items.get(pos), pos);
+		fragment.show(manager, FRAGMENT_EDIT_NAME);
 	}
 
-	private void writeItems() {
-		File filesDir = getFilesDir();
-		File todoFile = new File(filesDir, FILENAME);
+	private void updateItemAtPosition(int position, String string) {
+		items.remove(position);
+		items.add(position, string);
+		itemsAdapter.notifyDataSetChanged();
 
-		try {
-			FileUtils.writeLines(todoFile, items);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Utils.writeItems(this, items);
+	}
+
+	@Override
+	public void onTextEdited(String string, int position) {
+		updateItemAtPosition(position, string);
+
 	}
 }
