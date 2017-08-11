@@ -8,10 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import com.developer4droid.todoapp.R;
+import com.developer4droid.todoapp.adapters.NotesAdapter;
+import com.developer4droid.todoapp.entities.Note;
 import com.developer4droid.todoapp.fragments.EditTextDialogFragment;
 import com.developer4droid.todoapp.utils.Utils;
 
@@ -24,10 +25,8 @@ public class MainActivity extends AppCompatActivity implements EditTextDialogFra
 	public static final String FRAGMENT_EDIT_NAME = "fragment_edit_name";
 
 	private ListView lvItems;
-	private View mainLayout;
-	private View fillView;
-	private List<String> items;
-	private ArrayAdapter<String> itemsAdapter;
+	private List<Note> items;
+	private NotesAdapter notesAdapter;
 
 	private final static int EDIT_FIELD = 11;
 
@@ -38,12 +37,10 @@ public class MainActivity extends AppCompatActivity implements EditTextDialogFra
 		setContentView(R.layout.activity_main);
 
 		items = Utils.readItems(this);
-		itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
+		notesAdapter = new NotesAdapter(this, items);
 
-		mainLayout = findViewById(R.id.mainLayout);
-		fillView = findViewById(R.id.fillView);
 		lvItems = findViewById(R.id.lvItems);
-		lvItems.setAdapter(itemsAdapter);
+		lvItems.setAdapter(notesAdapter);
 
 		setupListViewListener();
 	}
@@ -63,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements EditTextDialogFra
 			@Override
 			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
 				items.remove(pos);
-				itemsAdapter.notifyDataSetChanged();
+				notesAdapter.notifyDataSetChanged();
 				Utils.writeItems(MainActivity.this, items);
 				return true;
 			}
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements EditTextDialogFra
 			if (TextUtils.isEmpty(text)) {
 				return;
 			}
-			itemsAdapter.add(text);
+			notesAdapter.add(new Note(text));
 			etNewItem.setText("");
 		} else {
 			return;
@@ -98,19 +95,19 @@ public class MainActivity extends AppCompatActivity implements EditTextDialogFra
 		Utils.writeItems(this, items);
 
 		// scroll to the end of list
-		lvItems.smoothScrollToPosition(itemsAdapter.getCount() - 1);
+		lvItems.smoothScrollToPosition(notesAdapter.getCount() - 1);
 	}
 
 	private void showEditDialog(int pos) {
 		FragmentManager manager = getSupportFragmentManager();
-		EditTextDialogFragment fragment = EditTextDialogFragment.newInstance(items.get(pos), pos);
+		EditTextDialogFragment fragment = EditTextDialogFragment.newInstance(items.get(pos).getNote(), pos);
 		fragment.show(manager, FRAGMENT_EDIT_NAME);
 	}
 
 	private void updateItemAtPosition(int position, String string) {
 		items.remove(position);
-		items.add(position, string);
-		itemsAdapter.notifyDataSetChanged();
+		items.add(position, new Note(string));
+		notesAdapter.notifyDataSetChanged();
 
 		Utils.writeItems(this, items);
 	}

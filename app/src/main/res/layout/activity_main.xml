@@ -15,14 +15,6 @@
 		android:layout_above="@+id/btnAddItem"
 		/>
 
-	<FrameLayout
-		android:id="@+id/fillView"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@color/colorAccentPressed"
-		android:visibility="invisible"
-		/>
-
 	<!--Edit Text-->
 	<EditText
 		android:id="@+id/etNewItem"
