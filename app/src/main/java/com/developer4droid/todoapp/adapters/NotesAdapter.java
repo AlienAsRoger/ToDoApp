@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.developer4droid.todoapp.R;
-import com.developer4droid.todoapp.entities.Note;
+import com.developer4droid.todoapp.db.entities.Note;
 
 import java.util.List;
 

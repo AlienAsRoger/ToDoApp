@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import com.developer4droid.todoapp.R;
 import com.developer4droid.todoapp.adapters.NotesAdapter;
-import com.developer4droid.todoapp.entities.Note;
+import com.developer4droid.todoapp.db.entities.Note;
 import com.developer4droid.todoapp.fragments.EditTextDialogFragment;
 import com.developer4droid.todoapp.utils.Utils;
 
@@ -59,9 +59,10 @@ public class MainActivity extends AppCompatActivity implements EditTextDialogFra
 		lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
+				Utils.deleteItem(MainActivity.this, items.get(pos));
 				items.remove(pos);
 				notesAdapter.notifyDataSetChanged();
-				Utils.writeItems(MainActivity.this, items);
+//				Utils.writeItems(MainActivity.this, items);
 				return true;
 			}
 		});
