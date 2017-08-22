@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -35,4 +39,9 @@ dependencies {
     compile "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     compile "android.arch.persistence.room:rxjava2:$rootProject.roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
+
+    //RxJava
+    compile "io.reactivex.rxjava2:rxjava:2.1.2"
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'com.github.akarnokd:rxjava2-extensions:0.16.0'
 }
